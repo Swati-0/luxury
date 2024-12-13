@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Estates</title>
+    <style>
+        body {
+            font-family: "Garamond", serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333;
+        }
+        h1 {
+            color: #d4af37;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .property-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .property-card:hover {
+            transform: scale(1.05);
+        }
+        .property-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .property-card h3 {
+            margin: 10px 0;
+        }
+        .property-card p {
+            margin: 5px 0;
+        }
+        button {
+            background: #d4af37;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #bfa334;
+        }
+        .auth-container {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .auth-container h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .auth-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .auth-container button {
+            width: 100%;
+            background: #d4af37;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .auth-container button:hover {
+            background: #bfa334;
+        }
+    </style>
+</head>
+<body>
+    <h1>Luxury Estates</h1>
+
+    <div class="auth-container" id="auth-container">
+        <h2>User Authentication</h2>
+        <input type="text" id="username" placeholder="Username" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="property-grid" class="property-grid"></div>
+
+    <script>
+        // Sample property data (replace with database/API fetch in real implementation)
+        const properties = [
+            {
+                id: 1,
+                title: "Luxury Villa in Beverly Hills",
+                price: 2500000,
+                location: "Beverly Hills, CA",
+                image: "https://via.placeholder.com/300x200",
+                description: "A stunning villa with modern amenities and breathtaking views."
+            },
+            {
+                id: 2,
+                title: "Penthouse in New York City",
+                price: 4500000,
+                location: "Manhattan, NY",
+                image: "https://via.placeholder.com/300x200",
+                description: "A lavish penthouse offering a panoramic view of the city skyline."
+            },
+            {
+                id: 3,
+                title: "Beachfront Mansion",
+                price: 12000000,
+                location: "Malibu, CA",
+                image: "https://via.placeholder.com/300x200",
+                description: "An exclusive beachfront property with private access to the ocean."
+            }
+        ];
+
+        // User browsing history (mock example)
+        let browsingHistory = [];
+
+        // Function to display properties in the grid
+        const propertyGrid = document.getElementById("property-grid");
+
+        function displayProperties(propertiesToShow) {
+            propertyGrid.innerHTML = "";
+            propertiesToShow.forEach(property => {
+                const card = document.createElement("div");
+                card.className = "property-card";
+                card.innerHTML = `
+                    <img src="${property.image}" alt="${property.title}" />
+                    <h3>${property.title}</h3>
+                    <p>${property.location}</p>
+                    <p>$${property.price.toLocaleString()}</p>
+                    <button onclick="viewDetails(${property.id})">View Details</button>
+                `;
+                propertyGrid.appendChild(card);
+            });
+        }
+
+        // Initial display of properties
+        displayProperties(properties);
+
+        // Function to view property details
+        function viewDetails(id) {
+            const property = properties.find(p => p.id === id);
+            if (property) {
+                browsingHistory.push(property);
+                alert(
+                    `Title: ${property.title}\n` +
+                    `Location: ${property.location}\n` +
+                    `Price: $${property.price.toLocaleString()}\n` +
+                    `Description: ${property.description}`
+                );
+            } else {
+                alert("Property not found!");
+            }
+        }
+
+        // Simple AI-based recommendation function
+        function recommendProperties() {
+            if (browsingHistory.length === 0) {
+                return properties.slice(0, 2); // Default recommendations
+            }
+
+            // Recommend properties based on the last viewed location
+            const lastViewed = browsingHistory[browsingHistory.length - 1];
+            return properties.filter(
+                p => p.location === lastViewed.location && p.id !== lastViewed.id
+            ).slice(0, 2);
+        }
+
+        // Simple login functionality
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (username === "admin" && password === "password") {
+                alert("Login successful!");
+                document.getElementById("auth-container").style.display = "none";
+                document.getElementById("property-grid").style.display = "grid";
+
+                // Display recommended properties after login
+                const recommended = recommendProperties();
+                displayProperties(recommended);
+
+                alert("Based on your preferences, we have recommendations for you!");
+            } else {
+                alert("Invalid credentials! Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>
